@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 #python3 /usr/lib/zabbix/alertscripts/zbxTT.py "YOUR_CHAT_ID" "subject" "message"
 
+import json
 import requests
 import sys
 
 class TelegramNotifier:
-    def __init__(self, token, chat_id, parse_mode='markdownv2'):
+    def __init__(self, token, chat_id, parse_mode='markdownv2', proxy=None):
         self.token = token
         self.chat_id = chat_id
         self.parse_mode = parse_mode
+        self.proxy = proxy
+        self.message_thread_ids = []
         self.message = ""
 
     def escape_markup(self, text):
-        if self.parse_mode == 'markdownv2':
+        if self.parse_mode == 'markdown':
+            return text.replace('_', '\\_').replace('*', '\\*').replace('[', '\\[')
+        elif self.parse_mode == 'markdownv2':
             return (text.replace('_', '\\_')
                         .replace('*', '\\*')
                         .replace('[', '\\[')
@@ -40,19 +45,23 @@ class TelegramNotifier:
             'disable_web_page_preview': True,
             'disable_notification': False
         }
+
         if message_thread_id:
             params['message_thread_id'] = message_thread_id
+
         if self.parse_mode:
             params['parse_mode'] = self.parse_mode
 
         url = f'https://api.telegram.org/bot{self.token}/sendMessage'
+
         response = requests.post(url, json=params)
+
         if response.status_code != 200:
             raise Exception(f"Error sending message: {response.text}")
 
 def main():
     try:
-        token = 'YOUR_BOT_TOKEN'
+        token = 'YOUR_BOT_TOKEN'  # Enter your token here
         chat_id = sys.argv[1] if len(sys.argv) > 1 else '{ALERT.SENDTO}'
         subject = sys.argv[2] if len(sys.argv) > 2 else '{ALERT.SUBJECT}'
         message = sys.argv[3] if len(sys.argv) > 3 else '{ALERT.MESSAGE}'
@@ -70,7 +79,12 @@ def main():
 
         notifier = TelegramNotifier(token, chat_id)
         notifier.message = f"{subject}\n{message}"
+
         message_thread_ids = [val for key in tags for val in tags[key]]
+
+        if not message_thread_ids:
+            message_thread_ids.append('1') # The default value if the MessageThreadId tag is not found
+
         notifier.message = notifier.escape_markup(notifier.message)
 
         for thread_id in message_thread_ids:
