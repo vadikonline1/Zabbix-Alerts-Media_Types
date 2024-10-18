@@ -1,16 +1,13 @@
 # Zabbix-Notification-Telegram-Topic
 
-This Python script is a Telegram notifier designed to send messages to a specified chat using the Telegram Bot API. It takes command-line arguments for the chat ID, message subject, message content, and optional event tags. The script handles Markdown formatting and allows for threading of messages by including a message thread ID. If an error occurs during message sending, it raises an exception with a relevant error message.
-This code snippet processes event tags for the Telegram notifier script. Here's a breakdown of its principles:
-1. **Initialization**: An empty dictionary `tags` is created to store parsed key-value pairs.
-2. **Stripping Input**: It checks if `event_tags` is not empty (after stripping whitespace).
-3. **Splitting Tags**: The input string is split by commas to handle multiple tags.
-4. **Key-Value Parsing**: Each tag is split by a colon (`:`) into a key and value:
-   * It ensures that there are exactly two parts (a key and a value).
-   * Both the key and value are stripped of surrounding whitespace.
-5. **Filtering by Key**: It specifically looks for keys that start with `'MessageThreadId'`:
-   * If found, it appends the value to a list in the `tags` dictionary, creating a new entry if necessary.
-This approach allows the script to gather relevant message thread IDs, which can be used to send messages in a specific thread in Telegram.
+Main Uses
+-
+* **Monitoring Notifications**: Used to send automatic notifications via Telegram when issues or anomalies are detected in systems monitored by Zabbix.
+* **Quick Visualization**: Provides a quick way to view relevant charts directly in Telegram, facilitating rapid responses from IT teams.
+* **Automation**: Can be integrated into automated workflows to improve incident management.
+
+This script is useful for technical support teams that want to stay informed about the status of their systems and respond quickly to issues.
+
 
 Zabbix Settings Media Types
 -
@@ -18,9 +15,14 @@ Create new media types
 1. **Name**: Telegram_Topic
 2. **Type**: Scrypt
 3. **Script name**: zbxTT.py (_name file that is used_)
-4. **Script parameters**:
-   1. {ALERT.SENDTO}
-   2. {ALERT.SUBJECT}
-   3. {ALERT.MESSAGE}
-   4. {EVENT.TAGS}
-   5. {ITEM.ID}
+4. **Script parameters**: ("here you can indicate direct values ​​or global macros, you already choose as you wish")
+   1. `{$ZABBIX.URL}` - use global macros or your_values
+   2. `{$ZABBIX.UI.USER}` - use global macros or your_values
+   3. `{$ZABBIX.UI.PASS}` - use global macros or your_values
+   4. `{$ZABBIX_TELEGRAM_TOKEN}` - use global macros or your_values
+   5. `{ALERT.SENDTO}` - zabbix macros are used, do not modify (recommended)
+   6. `{ALERT.SUBJECT}` - zabbix macros are used, do not modify (recommended)
+   7. `{ALERT.MESSAGE}` - zabbix macros are used, do not modify (recommended)
+   8. `{EVENT.TAGS}` - zabbix macros are used, do not modify (recommended)
+   9. `{ITEM.ID}` - zabbix macros are used, do not modify (recommended)
+   10. set the default value "**1**" or any value that all messages that do not have the tag: `**MessageThreadId**`, will be sent in the topic with the indicated cheat ID. (Ex: `-100123456789_1`, set the value after the _ character)
