@@ -17,7 +17,7 @@ Zabbix Settings Media Types
 Create new media types
 1. **Name**: Telegram_Topic
 2. **Type**: Scrypt
-3. **Script name**: zbxTT.py
+3. **Script name**: zbxTT.py (_name file that is used_)
 4. **Script parameters**:
    1. {ALERT.SENDTO}
    2. {ALERT.SUBJECT}
