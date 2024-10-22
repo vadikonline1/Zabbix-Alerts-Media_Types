@@ -1,7 +1,6 @@
 # Zabbix-Template-Settings
 
-## Windows_Inventory_Settings
-[Windows_Inventory_Settings](Windows_Inventory.yaml)
+## Windows_Inventory_Settings: [Windows_Inventory_Settings](Windows_Inventory.yaml)
 
 Administration_Macros:
 - `{$SYSTEM.RUN.INSTALLEDAPPS}` : `$installedApps = foreach ($path in $paths) { Get-ItemProperty $path -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName } | Select-Object DisplayName, InstallDate, DisplayVersion, Publisher, InstallLocation }`
