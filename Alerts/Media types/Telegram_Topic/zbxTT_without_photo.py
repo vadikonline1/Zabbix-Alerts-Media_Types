@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+########################
+#  https://t.me/vadikonline1 #
+########################
+# https://github.com/vadikonline1/Zabbix-Repository
 #python3 /usr/lib/zabbix/alertscripts/zbxTT.py "your_website" "your_api_token" "your_telegram_token" "YOUR_CHAT_ID" "subject" "message" "event_tags" "item_id"
 
 import json
