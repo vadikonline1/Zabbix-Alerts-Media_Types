@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+########################
+#  https://t.me/vadikonline1 #
+########################
+# https://github.com/vadikonline1/Zabbix-Repository
 
 import json
 import requests
