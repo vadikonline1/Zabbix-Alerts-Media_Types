@@ -31,7 +31,7 @@ Create new media types
 5. Alerts -> Media types -> Message templates (you can create your own template and/or customize it with parameters from zabbix) view detail: https://www.zabbix.com/documentation/current/en/manual/config/notifications/media
    1. Message type `Problem`: 
          * Subject: `({TRIGGER.SEVERITY}) {TRIGGER.STATUS}: {EVENT.NAME}`
-         * Message: `#TID_{TRIGGER.ID} #EID_{EVENT.ID}` `Host: {HOST.NAME}` `Service problem started at {EVENT.TIME} on {EVENT.DATE}` `Last value: {ITEM.VALUE1}`  `{TRIGGER.DESCRIPTION}`  `Details: {$ZABBIX.URL}/tr_events.php?triggerid={TRIGGER.ID}&eventid={EVENT.ID}`
+         * Message: `#TID_{TRIGGER.ID} #EID_{EVENT.ID}` `Host: {HOST.NAME}` `Service problem started at {EVENT.TIME} on {EVENT.DATE}` `Last value: {ITEM.VALUE1}` `Details: {$ZABBIX.URL}/tr_events.php?triggerid={TRIGGER.ID}&eventid={EVENT.ID}`  `{TRIGGER.DESCRIPTION}` 
    2. Message type `Problem recovery`:
          * Subject: `({TRIGGER.SEVERITY}) Resolved in {EVENT.DURATION}: {TRIGGER.NAME}`
          * Message: `#TID_{TRIGGER.ID} #EID_{EVENT.ID}` `Host: {HOST.NAME}` `Service problem started at {EVENT.TIME} on {EVENT.DATE}` `Last value: {ITEM.VALUE1} `
