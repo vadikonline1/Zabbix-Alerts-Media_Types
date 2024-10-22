@@ -3,21 +3,19 @@
 #  https://t.me/vadikonline1 #
 ########################
 # https://github.com/vadikonline1/Zabbix-Repository
-#python3 /usr/lib/zabbix/alertscripts/zbxTT.py "your_website" "your_api_token" "your_telegram_token" "YOUR_CHAT_ID" "subject" "message" "event_tags" "item_id"
+#python3 /usr/lib/zabbix/alertscripts/zbxTT.py "your_telegram_token" "YOUR_CHAT_ID" "subject" "message" "event_tags" "item_id"
 
 import json
 import requests
 import sys
 
-zabbix_url = sys.argv[1] if len(sys.argv) > 1 else '{$ZABBIX.URL}'
-zabbix_api_token = sys.argv[2] if len(sys.argv) > 2 else '{$ZABBIX_API_TOKEN}'
-zabbix_telegram_token = sys.argv[3] if len(sys.argv) > 3 else '{$ZABBIX_TELEGRAM_TOKEN}'
-chat_id = sys.argv[4] if len(sys.argv) > 4 else '{ALERT.SENDTO}'
-subject = sys.argv[5] if len(sys.argv) > 5 else '{ALERT.SUBJECT}'
-message = sys.argv[6] if len(sys.argv) > 6 else '{ALERT.MESSAGE}'
-event_tags = sys.argv[7] if len(sys.argv) > 7 else ''
-item_id = sys.argv[8] if len(sys.argv) > 8 else '{ITEM.ID}'
-message_thread_id_default = sys.argv[9] if len(sys.argv) > 9 else '1'  # The default value if the MessageThreadId tag is not found
+zabbix_telegram_token = sys.argv[1] if len(sys.argv) > 1 else '{$ZABBIX_TELEGRAM_TOKEN}'
+chat_id = sys.argv[2] if len(sys.argv) > 2 else '{ALERT.SENDTO}'
+subject = sys.argv[3] if len(sys.argv) > 3 else '{ALERT.SUBJECT}'
+message = sys.argv[4] if len(sys.argv) > 4 else '{ALERT.MESSAGE}'
+event_tags = sys.argv[5] if len(sys.argv) > 5 else ''
+item_id = sys.argv[6] if len(sys.argv) > 6 else '{ITEM.ID}'
+message_thread_id_default = sys.argv[7] if len(sys.argv) > 7 else '1'  # The default value if the MessageThreadId tag is not found
 
 
 class TelegramNotifier:
@@ -26,7 +24,7 @@ class TelegramNotifier:
         self.chat_id = chat_id
         self.parse_mode = parse_mode
         self.proxy = proxy
-        self.message_thread_ids = ['106']
+        self.message_thread_ids = []
         self.message = ""
 
     def escape_markup(self, text):
