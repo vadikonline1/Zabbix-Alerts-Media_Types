@@ -1,0 +1,215 @@
+zabbix_export:
+  version: '6.4'
+  template_groups:
+    - uuid: 53bd804f13fc4fab96404413d3f19d34
+      name: Application_Intem_Individuals
+    - uuid: 846977d1dfed4968bc5f8bdb363285bc
+      name: 'Templates/Operating systems'
+  templates:
+    - uuid: a3d1ef7fae514fb4b607f6c61a78b861
+      template: 'Windows Inventory'
+      name: 'Windows Inventory'
+      groups:
+        - name: Application_Intem_Individuals
+        - name: 'Templates/Operating systems'
+      items:
+        - uuid: 5dc95b7a846a488683e3d0b954b74b18
+          name: Hostname
+          key: agent.hostname
+          delay: 1h
+          history: 6d
+          trends: '0'
+          value_type: CHAR
+          description: 'System name.'
+          inventory_link: ALIAS
+          tags:
+            - tag: component
+              value: Inventory
+            - tag: message_thread_id
+              value: '9'
+        - uuid: c1467173963142dc9fe8a23989acea65
+          name: 'Hostname System'
+          key: system.hostname
+          delay: 1h
+          history: 6d
+          trends: '0'
+          value_type: CHAR
+          description: 'System host name.'
+          inventory_link: NAME
+          preprocessing:
+            - type: DISCARD_UNCHANGED_HEARTBEAT
+              parameters:
+                - 1d
+          tags:
+            - tag: component
+              value: Inventory
+            - tag: message_thread_id
+              value: '9'
+          triggers:
+            - uuid: 4cc69cbe10934d079a3f3ebfd75eeba9
+              expression: 'last(/Windows Inventory/system.hostname,#1)<>last(/Windows Inventory/system.hostname,#2) and length(last(/Windows Inventory/system.hostname))>0'
+              name: 'System name has changed (new name: {ITEM.VALUE})'
+              priority: INFO
+              description: 'System name has changed. Ack to close.'
+              tags:
+                - tag: message_thread_id
+                  value: '9'
+                - tag: team
+                  value: DAAP
+        - uuid: dd94ca8b36794edeb85663c0c86df84e
+          name: 'Create Folder {$SYSTEM.RUN.PATH}\System'
+          key: 'system.run["cmd.exe /c if exist \"C:\\Program Files\\Zabbix Agent 2\" (mkdir \"C:\\Program Files\\Zabbix Agent 2\\system\") else (mkdir \"C:\\Program Files\\Zabbix Agent\\system\")"]'
+          delay: 0;h23
+          history: 7d
+          trends: '0'
+          value_type: TEXT
+          description: |
+            Create Folder:
+            - C:\Program Files\Zabbix Agent\System or C:\Program Files\Zabbix Agent 2\System
+          tags:
+            - tag: component
+              value: Inventory
+            - tag: message_thread_id
+              value: '9'
+        - uuid: 9751cff5db864371b9057c4c1a0e2e4a
+          name: 'System Host Network'
+          key: 'system.run["cmd /c ipconfig"]'
+          delay: 1d
+          history: 6d
+          trends: '0'
+          value_type: TEXT
+          description: 'System Networks IPCONFIG'
+          inventory_link: HOST_NETWORKS
+          tags:
+            - tag: component
+              value: 'Host Network'
+            - tag: component
+              value: Inventory
+            - tag: message_thread_id
+              value: '9'
+        - uuid: 0dfa4460688c4c7bbac762cfae40cc04
+          name: 'System Packages HotFixID Read'
+          key: 'system.run["powershell -Command \"& { $path = & {$SYSTEM.RUN.PATH}; Get-Content -Path \"$path\\HotFixID.txt\" }\""]'
+          delay: 0;h00
+          history: 30d
+          trends: '0'
+          value_type: TEXT
+          description: 'Afisarea KB-urilor instalate'
+          inventory_link: HARDWARE_FULL
+          tags:
+            - tag: component
+              value: HotFixID
+            - tag: component
+              value: Inventory
+            - tag: message_thread_id
+              value: '9'
+        - uuid: fde2409ffe154fa2b3c40a9191d8e9dc
+          name: 'System Packages HotFixID Get'
+          key: 'system.run["powershell -Command \"& { $path = & {$SYSTEM.RUN.PATH}; Get-HotFix | Select-Object HotFixID, InstalledOn, Description | Out-File -FilePath \"$path\\HotFixID.txt\" }\"",nowait]'
+          delay: 0;h00
+          history: 30d
+          trends: '0'
+          value_type: TEXT
+          description: Get-HotFix
+          tags:
+            - tag: component
+              value: HotFixID
+            - tag: component
+              value: Inventory
+            - tag: message_thread_id
+              value: '9'
+        - uuid: 404d1d0f085f4b619e5833f21f2fe45d
+          name: 'Windows Services List'
+          key: 'system.run["powershell.exe -Command \"Get-Service | Select-Object Name, DisplayName, Status| Format-List \""]'
+          delay: 1d
+          history: 6d
+          trends: '0'
+          value_type: TEXT
+          description: |
+            Windows Services:
+            Name
+            ShortName
+            Status
+          inventory_link: CONTACT
+          tags:
+            - tag: component
+              value: Inventory
+            - tag: message_thread_id
+              value: '9'
+        - uuid: 1446548b91204bd3a74063bddf3f99ea
+          name: 'System Installed Apps Read'
+          key: 'system.run[powershell.exe -Command "{$SYSTEM.RUN.REGEDIT}; {$SYSTEM.RUN.INSTALLEDAPPS}; $installedApps "]'
+          delay: 0;h00
+          history: 30d
+          trends: '0'
+          value_type: TEXT
+          description: 'Installed applications on System'
+          inventory_link: SOFTWARE_FULL
+          tags:
+            - tag: component
+              value: HotFixID
+            - tag: component
+              value: Inventory
+            - tag: message_thread_id
+              value: '9'
+        - uuid: 7f22daae14a44c1298dfe48d675f0313
+          name: 'System OS'
+          key: system.sw.os
+          delay: 1d
+          history: 7d
+          trends: '0'
+          value_type: CHAR
+          description: 'System description of the host.'
+          inventory_link: OS
+          preprocessing:
+            - type: REGEX
+              parameters:
+                - '(Windows Server \d{4} (R2 )?Standard) \d+\.\d+\.\w+\.\w+.* (Build (\d+))'
+                - '\1 \2 \3'
+          tags:
+            - tag: component
+              value: Inventory
+            - tag: message_thread_id
+              value: '9'
+          triggers:
+            - uuid: 3ce5b9780d9242afaa938f342df667d2
+              expression: 'last(/Windows Inventory/system.sw.os,#1)<>last(/Windows Inventory/system.sw.os,#2) and length(last(/Windows Inventory/system.sw.os))>0'
+              name: 'System OS has changed (new name: {ITEM.VALUE})'
+              priority: INFO
+              description: 'System OS has changed. Ack to close.'
+              manual_close: 'YES'
+              tags:
+                - tag: message_thread_id
+                  value: '9'
+                - tag: team
+                  value: DAAP
+        - uuid: 00928a6249f5421fa5ae0b681a02c8aa
+          name: Uptime
+          key: system.uptime
+          delay: 30s
+          history: 6d
+          trends: '0'
+          units: uptime
+          description: 'System uptime in ''N days, hh:mm:ss'' format.'
+          inventory_link: DEPLOYMENT_STATUS
+          tags:
+            - tag: component
+              value: Inventory
+            - tag: message_thread_id
+              value: '9'
+          triggers:
+            - uuid: eb8bbac4ccf347cabbd159aca7b8959b
+              expression: 'last(/Windows Inventory/system.uptime)<5m'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: 'last(/Windows Inventory/system.uptime)>5m'
+              name: 'Host has been restarted (uptime < 5m)'
+              description: 'The device uptime is less than 5 minutes.'
+              manual_close: 'YES'
+              tags:
+                - tag: message_thread_id
+                  value: '9'
+                - tag: team
+                  value: DAAP
+      tags:
+        - tag: component
+          value: Inventory
