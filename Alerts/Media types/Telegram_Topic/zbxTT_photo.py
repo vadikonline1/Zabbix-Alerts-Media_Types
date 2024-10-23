@@ -3,7 +3,6 @@
 #  https://t.me/vadikonline1 #
 ########################
 # https://github.com/vadikonline1/Zabbix-Repository
-
 import json
 import requests
 import sys
@@ -91,6 +90,16 @@ class TelegramNotifier:
         else:
             raise Exception('Autentificare eșuată.')
 
+    def check_chat_is_forum(self):
+        url = f'https://api.telegram.org/bot{self.zabbix_telegram_token}/getChat?chat_id={self.chat_id}'
+        response = requests.get(url)
+        
+        if response.status_code != 200:
+            raise Exception(f"Error getting chat info: {response.text}")
+
+        chat_info = response.json()
+        return chat_info.get('result', {}).get('is_forum', False)
+
 def main():
     try:
         tags = {}
@@ -113,9 +122,15 @@ def main():
         notifier.message = notifier.escape_markup(notifier.message)
         chart_image = notifier.get_chart_png(item_id)
 
+        # Check if the chat is a forum
+        is_forum = notifier.check_chat_is_forum()
+
         for thread_id in message_thread_ids:
             if thread_id:
-                notifier.send_message_with_photo(message_thread_id=thread_id, photo_data=chart_image)
+                if is_forum:
+                    notifier.send_message_with_photo(message_thread_id=thread_id, photo_data=chart_image)
+                else:
+                    notifier.send_message_with_photo(photo_data=chart_image)
 
         return 'OK'
     except Exception as error:
